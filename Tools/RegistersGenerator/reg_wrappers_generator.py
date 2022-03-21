@@ -4,6 +4,7 @@ from model import SVDField
 import os
 import argparse
 import re
+from pathlib import Path
 
 access_mode = {
     'read-only': 'ReadMode',
@@ -537,13 +538,14 @@ def main():
     parser = SVDParser.for_xml_file(args.input_file)
     device = process_device(parser.get_device())
 
-    device_name = camel_case(device.name)
+    device_folder = Path(camel_case(device.name))
 
-    if (not os.path.isdir(device_name)):
-        os.mkdir(device_name)
+    if (not device_folder.is_dir()):
+        device_folder.mkdir()
         
-    if (not os.path.isdir('{}\FieldValues'.format(device_name))):
-        os.mkdir('{}\FieldValues'.format(device_name))
+    field_values_folder = device_folder.joinpath('FieldValues')
+    if (not field_values_folder.is_dir()):
+        field_values_folder.mkdir()
         
     if (args.p != None):
         peripherals = [x for x in device.peripherals if x.name.lower() == args.p.lower()]
@@ -554,9 +556,9 @@ def main():
         peripheral_name = peripheral.name.lower().replace('_', '')
         reg_file_name = '{}registers.hpp'.format(peripheral_name)
         enum_file_name = '{}fieldvalues.hpp'.format(peripheral_name)
-        enum_file_full_name = '{}\FieldValues\{}'.format(device_name, enum_file_name)
+        enum_file_full_name = field_values_folder.joinpath(enum_file_name)
     
-        with open('{}\{}'.format(device_name, reg_file_name), 'w') as registers_file:
+        with device_folder.joinpath(reg_file_name).open('w') as registers_file:
             if (peripheral.description != None):
                 per_description = '{}. This header file is auto-generated for {} device.'.format(
                     peripheral.description.rstrip('. '),
@@ -577,8 +579,8 @@ def main():
             registers_file.write('#include "accessmode.hpp"     //for ReadMode, WriteMode, ReadWriteMode  \n')
             registers_file.write('\n')
             
-            if((args.o) or (not os.path.isfile(enum_file_full_name))):
-                with open(enum_file_full_name, 'w') as enumerations_file:
+            if((args.o) or (not enum_file_full_name.is_file())):
+                with enum_file_full_name.open('w') as enumerations_file:
                     enumerations_file.write(create_file_description(
                         enum_file_name,
                         'Enumerations related with {} peripheral. This header file is auto-generated for {} device.'.format(
