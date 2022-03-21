@@ -6,4 +6,6 @@
 /cmake-build-debug-mingw/
 /Debug/
 /settings/
-
+__pypackages__
+*.pyc
+.pdm.toml
