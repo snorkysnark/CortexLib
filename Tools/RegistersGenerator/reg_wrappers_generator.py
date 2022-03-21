@@ -1,6 +1,6 @@
-from cmsis_svd.parser import SVDParser
-from cmsis_svd.model import SVDRegister
-from cmsis_svd.model import SVDField
+from parser import SVDParser
+from model import SVDRegister
+from model import SVDField
 import os
 import argparse
 import re
