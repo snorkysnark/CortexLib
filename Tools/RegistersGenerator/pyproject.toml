@@ -6,7 +6,9 @@ authors = [
     {name = "francisthebasilisk", email = "snorkysnark@gmail.com"},
 ]
 dependencies = [
-    "setuptools>=60.10.0"]
+    "setuptools>=60.10.0",
+    "six>=1.16.0",
+]
 requires-python = ">=3.9"
 license = {text = "MIT"}
 
